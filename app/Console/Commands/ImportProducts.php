@@ -59,7 +59,7 @@ class ImportProducts extends Command
         $categories = [];
 
         foreach($datas as $title) {
-            $categoriesArray[$title] = DB::table('categories')->where('title', $title)->first()->id;
+            $categories[$title] = DB::table('categories')->where('title', $title)->first()->id;
         }
        
         return $categories;
