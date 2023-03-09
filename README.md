@@ -1,6 +1,6 @@
 Application is created for testing product import from xlxs file to DB
 
-Instalation is tested localy on ubuntu 22.04
+Installation is tested localy on ubuntu 22.04 and runs successfully
 
 Please, follow the next steps:
 
@@ -33,7 +33,8 @@ the products which were failed to be inserted in DB are counted and logged
 
 
 
-as for the interest you can visit http://localhost 
+for the interestб you can visit http://localhost 
 
-application is able to import huge xlsx file, hence it uses generator.
-thanks to https://github.com/shuchkin/simplexlsx package
+application is able to import huge xlsx file, because it uses generator.
+due to https://github.com/shuchkin/simplexlsx package
+
