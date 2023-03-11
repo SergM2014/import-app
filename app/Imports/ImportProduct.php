@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Illuminate\Support\Facades\Log;
 
 class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
 {
@@ -15,21 +16,20 @@ class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
     
     private $headingRow = true;
 
+    private $counter = 0;
+
+    private $dublicatedProducts = [];
+
     public function __construct()
     {
         $this->categories = $this->getCategories();
-   
     }
 
-
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
     public function model(array $row)
     {
         if($this->headingRow == true) { $this->headingRow = false; return null; }
+
+        $this->counter++;
 
         $title = $this->getCategoryTitle($row);
 
@@ -86,5 +86,13 @@ class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
         if ($title == '') $title = $value[2];
 
         return $title;
+    }
+
+    private function logging(): void
+    {
+        Log::channel('importProducts')->info("Total number of inserted in Db records is : $this->counter");
+        if (!empty($this->dublicatedProducts)) { 
+             Log::channel('importProducts')->info("Total number of dublicated records is : ".count($this->dublicatedProducts));
+        }
     }
 }
