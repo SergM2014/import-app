@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Imports\ImportProduct;
 use App\Services\XlsxParser;
 use Illuminate\Console\Command;
 use Generator;
@@ -43,10 +44,11 @@ class ImportProducts extends Command
     {
         $start = time();
 
-        $products = $this->xlsxParser->getDatas();
-        $categories = $this->getCategories();
+        // $products = $this->xlsxParser->getDatas();
+        // $categories = $this->getCategories();
        
-        $this->insertProduct($products, $categories);
+       // $this->insertProduct($products, $categories);
+        \Excel::import(new ImportProduct, storage_path(config('app.import.xlsxFile')));
 
         $time = time()-$start;
         $this->info('Used RAM '.(memory_get_peak_usage(true)/1024/1024).' MB');
