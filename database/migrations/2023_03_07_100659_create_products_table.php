@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories');
             $table->string('manufacturer');
             $table->string('title');
-            $table->string('code')->index();
+            $table->string('code')->unique();
             $table->text('description');
             $table->decimal('price', $precision = 8, $scale = 2);
             $table->enum('warranty', [ '24', '36', 'no']);
