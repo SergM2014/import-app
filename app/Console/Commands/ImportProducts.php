@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Imports\ImportProduct;
-use App\Services\XlsxParser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
