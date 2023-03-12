@@ -4,9 +4,12 @@ namespace App\Imports;
 
 use App\Models\Category;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class CategoryImport implements ToModel
+class CategoryImport implements ToModel, WithUpserts
 {
+    private $headingRow = true;
+
     /**
     * @param array $row
     *
@@ -14,6 +17,8 @@ class CategoryImport implements ToModel
     */
     public function model(array $row)
     {
+        if ($this->headingRow == true) { $this->headingRow = false; return null; }
+
         $title = ($row[0] == '')?  $row[1]: $row[0];
         if ($title == '') $title = $row[2];
 
@@ -21,4 +26,9 @@ class CategoryImport implements ToModel
             'title' => $title,
         ]);
     } 
+
+    public function uniqueBy()
+    {
+        return 'title';
+    }
 }
