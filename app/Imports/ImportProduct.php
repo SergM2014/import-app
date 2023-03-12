@@ -9,8 +9,9 @@ use Maatwebsite\Excel\Concerns\WithUpserts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 
-class ImportProduct implements ToModel,  WithUpserts, WithChunkReading
+class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatchInserts
 {
     private $categories;
     
@@ -57,6 +58,11 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading
     }
 
     public function chunkSize(): int
+    {
+        return 1000;
+    }
+
+    public function batchSize(): int
     {
         return 1000;
     }
