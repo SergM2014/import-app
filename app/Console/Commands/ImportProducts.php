@@ -48,8 +48,10 @@ class ImportProducts extends Command
         // $categories = $this->getCategories();
        
        // $this->insertProduct($products, $categories);
-        \Excel::import(new ImportProduct, storage_path(config('app.import.xlsxFile')));
+        $import = new ImportProduct;
+        \Excel::import($import, storage_path(config('app.import.xlsxFile')));
 
+        $this->logging($import->getrowCount());
         $time = time()-$start;
         $this->info('Used RAM '.(memory_get_peak_usage(true)/1024/1024).' MB');
         $this->info("End. The prozess lasted $time seconds");
