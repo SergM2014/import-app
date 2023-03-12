@@ -7,16 +7,16 @@ use App\Services\XlsxParser;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
+class ImportProduct implements ToModel,  WithUpserts, WithChunkReading
 {
     private $categories;
     
     private $headingRow = true;
 
-    private $counter = 0;
+    private $rows = 0;
 
     private $dublicatedProducts = [];
 
@@ -29,19 +29,17 @@ class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
     {
         if($this->headingRow == true) { $this->headingRow = false; return null; }
 
-        $this->counter++;
-
         $title = $this->getCategoryTitle($row);
 
             $categoryId = $this->categories[$title];
 
-            if($row[10] != '') {
-                unset($row[0]);
+                if(isset($row[10])) {
+                    unset($row[0]);
 
-                $temp = [];
-                foreach ($row as $key => $value) $temp[$key-1] = $value;
-                $row = $temp;
-            }
+                    $temp = [];
+                    foreach ($row as $key => $value) $temp[$key-1] = $value;
+                    $row = $temp;
+                }
 
         $warrantyStatus = $row[8] == config('app.import.warrantyStatus')? 'no': (string)$row[8];
         $presenceStatus = $row[9] == config('app.import.presenceStatus')? 'yes': 'no';
@@ -58,7 +56,7 @@ class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
         ]);
     }
 
-    public function batchSize(): int
+    public function chunkSize(): int
     {
         return 1000;
     }
@@ -78,6 +76,11 @@ class ImportProduct implements ToModel,  WithUpserts, WithBatchInserts
         }
        
         return $categories;
+    }
+
+    public function getRowCount(): int
+    {
+        return $this->rows;
     }
 
     public function getCategoryTitle($value)
