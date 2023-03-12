@@ -3,17 +3,15 @@
 namespace App\Imports;
 
 use App\Models\Product;
-use App\Services\XlsxParser;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithUpserts;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use App\Models\Category;
 
 class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatchInserts
 {
-    private $categories;
+    private $categories = [];
     
     private $headingRow = true;
 
@@ -23,7 +21,7 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
 
     public function __construct()
     {
-        $this->categories = $this->getCategories();
+         $this->getCategories();
     }
 
     public function model(array $row)
@@ -34,15 +32,15 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
 
         $title = $this->getCategoryTitle($row);
 
-            $categoryId = $this->categories[$title];
+        $categoryId = $this->categories[$title];
 
-                if(isset($row[10])) {
-                    unset($row[0]);
+        if(isset($row[10])) {
+            unset($row[0]);
 
-                    $temp = [];
-                    foreach ($row as $key => $value) $temp[$key-1] = $value;
-                    $row = $temp;
-                }
+            $temp = [];
+            foreach ($row as $key => $value) $temp[$key-1] = $value;
+            $row = $temp;
+        }
 
         $warrantyStatus = $row[8] == config('app.import.warrantyStatus')? 'no': (string)$row[8];
         $presenceStatus = $row[9] == config('app.import.presenceStatus')? 'yes': 'no';
@@ -75,16 +73,13 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
         return 'code';
     }
 
-    private function getCategories(): array
+    private function getCategories()
     {
-        $datas = (new xlsxParser())->getCategories();
-        $categories = [];
+        $datas = Category::all();
 
-        foreach($datas as $title) {
-            $categories[$title] = DB::table('categories')->where('title', $title)->first()->id;
+        foreach ($datas as $data) {
+            $this->categories [$data->title] = $data->id;
         }
-       
-        return $categories;
     }
 
     public function getRowCount(): int
@@ -104,5 +99,4 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
 
         return $title;
     }
-
 }
