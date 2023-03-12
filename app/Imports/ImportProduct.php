@@ -19,7 +19,7 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
 
     private $rows = 0;
 
-    private $dublicatedProducts = [];
+    private $dublicatedProducts = 0;
 
     public function __construct()
     {
@@ -31,7 +31,7 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
         if($this->headingRow == true) { $this->headingRow = false; return null; }
 
         ++$this->rows;
-        
+
         $title = $this->getCategoryTitle($row);
 
             $categoryId = $this->categories[$title];
@@ -71,6 +71,7 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
 
     public function uniqueBy()
     {
+        ++$this->dublicatedProducts;
         return 'code';
     }
 
@@ -91,6 +92,11 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
         return $this->rows;
     }
 
+    public function getDublicatedProducts()
+    {
+        return $this->dublicatedProducts;
+    }
+
     public function getCategoryTitle($value)
     {
         $title = ($value[0] == '')?  $value[1]: $value[0];
@@ -99,11 +105,4 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
         return $title;
     }
 
-    private function logging(): void
-    {
-        Log::channel('importProducts')->info("Total number of inserted in Db records is : $this->counter");
-        if (!empty($this->dublicatedProducts)) { 
-             Log::channel('importProducts')->info("Total number of dublicated records is : ".count($this->dublicatedProducts));
-        }
-    }
 }
