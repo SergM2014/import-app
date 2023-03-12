@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use App\Services\XlsxParser;
+use App\Imports\CategoryImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,15 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = (new XlsxParser())->getCategories();
-
-        foreach ($categories as $category) {
-            DB::table('categories')->insert([
-                'title' => $category,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
-    
+        Excel::import(new CategoryImport, storage_path(config('app.import.xlsxFile')));
     }
 }
