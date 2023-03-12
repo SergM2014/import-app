@@ -28,8 +28,6 @@ class ImportProducts extends Command
 
     private $xlsxParser;
 
-    private $dublicatedProducts = [];
-
     public function __construct(XlsxParser $xlsxParser)
     {
         $this->xlsxParser = $xlsxParser;
@@ -50,8 +48,8 @@ class ImportProducts extends Command
        // $this->insertProduct($products, $categories);
         $import = new ImportProduct;
         \Excel::import($import, storage_path(config('app.import.xlsxFile')));
-dd($import->getRowCount());
-        $this->logging($import->getrowCount());
+
+        $this->logging($import->getrowCount(), $import->getDublicatedProducts());
         $time = time()-$start;
         $this->info('Used RAM '.(memory_get_peak_usage(true)/1024/1024).' MB');
         $this->info("End. The prozess lasted $time seconds");
@@ -106,11 +104,11 @@ dd($import->getRowCount());
         $this->logging($counter);
     }
 
-    private function logging($counter): void
+    private function logging($counter, $dublicatedProducts): void
     {
         Log::channel('importProducts')->info("Total number of inserted in Db records is : $counter");
-        if (!empty($this->dublicatedProducts)) { 
-             Log::channel('importProducts')->info("Total number of dublicated records is : ".count($this->dublicatedProducts));
+        if ($dublicatedProducts >0) { 
+             Log::channel('importProducts')->info("Total number of dublicated records is : $dublicatedProducts");
         }
     }  
     
