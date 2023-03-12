@@ -50,7 +50,7 @@ class ImportProducts extends Command
        // $this->insertProduct($products, $categories);
         $import = new ImportProduct;
         \Excel::import($import, storage_path(config('app.import.xlsxFile')));
-
+dd($import->getRowCount());
         $this->logging($import->getrowCount());
         $time = time()-$start;
         $this->info('Used RAM '.(memory_get_peak_usage(true)/1024/1024).' MB');

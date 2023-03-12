@@ -30,6 +30,8 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
     {
         if($this->headingRow == true) { $this->headingRow = false; return null; }
 
+        ++$this->rows;
+        
         $title = $this->getCategoryTitle($row);
 
             $categoryId = $this->categories[$title];
