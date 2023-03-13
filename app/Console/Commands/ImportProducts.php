@@ -6,6 +6,7 @@ use App\Rules\MaxSizeRule;
 use App\Imports\ImportProduct;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -52,7 +53,7 @@ class ImportProducts extends Command
         }
 
         $import = new ImportProduct;
-        \Excel::import($import, storage_path(config('app.import.xlsxFile')));
+        Excel::import($import, $file);
 
         $this->logging($import->getrowCount(), $import->getDublicatedProducts());
         $time = time()-$start;
