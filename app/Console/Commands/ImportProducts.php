@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Rules\MaxSizeRule;
 use App\Imports\ImportProduct;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 
 class ImportProducts extends Command
@@ -29,6 +31,25 @@ class ImportProducts extends Command
     public function handle(): void
     {
         $start = time();
+
+        $file = storage_path(config('app.import.xlsxFile'));
+
+        $validator = Validator::make(
+            [
+                'file'       => $file,
+                'extension'  => strtolower(pathinfo($file, PATHINFO_EXTENSION)),
+                'mimeType'   => mime_content_type($file),
+            ],
+            [
+                'file'       => new MaxSizeRule,
+                'extension'  => 'in:xlsx,xls',
+                'mimeType'   => 'in:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]
+          );
+
+        if ($validator->fails()) {
+           die('The following errors took place => '.$validator->errors().PHP_EOL);
+        }
 
         $import = new ImportProduct;
         \Excel::import($import, storage_path(config('app.import.xlsxFile')));
