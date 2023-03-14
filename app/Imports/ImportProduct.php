@@ -42,8 +42,8 @@ class ImportProduct implements ToModel,  WithUpserts, WithChunkReading, WithBatc
             $row = $temp;
         }
 
-        $warrantyStatus = $row[8] == config('app.import.warrantyStatus')? 'no': (string)$row[8];
-        $presenceStatus = $row[9] == config('app.import.presenceStatus')? 'yes': 'no';
+        $warrantyStatus = $row[8] == config('import.warrantyStatus')? 'no': (string)$row[8];
+        $presenceStatus = $row[9] == config('import.presenceStatus')? 'yes': 'no';
 
         return new Product([
             'category_id' => $categoryId,

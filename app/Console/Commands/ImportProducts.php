@@ -33,7 +33,7 @@ class ImportProducts extends Command
     {
         $start = time();
 
-        $file = storage_path(config('app.import.xlsxFile'));
+        $file = storage_path(config('import.xlsxFile'));
 
         $validator = Validator::make(
             [

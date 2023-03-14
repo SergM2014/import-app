@@ -214,16 +214,4 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
-
-    'import' => [
-
-        'xlsxFile' => 'import.xlsx',
-
-        'presenceStatus' => 'есть в наличие',
-
-        'warrantyStatus' => 'Нет',
-
-        'fileSize' => 2, //megabite
-    ]
-
 ];

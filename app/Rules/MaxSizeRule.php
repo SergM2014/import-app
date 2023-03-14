@@ -14,9 +14,9 @@ class MaxSizeRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $total_size = filesize(storage_path(config('app.import.xlsxFile')));
+        $total_size = filesize(storage_path(config('import.xlsxFile')));
 
-        if ($total_size > (config('app.import.fileSize'))*1048576) {
+        if ($total_size > (config('import.fileSize'))*1048576) {
             $fail('Total file size exseeds the allowed maximum');
         }
     }
